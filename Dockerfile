@@ -16,4 +16,4 @@ ENV PORT=5000
 EXPOSE 5000
 
 # Command to run the application
-CMD ["python", "web_server.py"]
+CMD ["python", "bot.py"]
