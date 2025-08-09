@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-AI Telegram Bot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            max-width: 600px;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .feature h3 {
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .status {
+            margin: 30px 0;
+            padding: 15px;
+            background: rgba(0, 255, 0, 0.2);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+        
+        .status.loading {
+            background: rgba(255, 255, 0, 0.2);
+            border-color: rgba(255, 255, 0, 0.3);
+        }
+        
+        .telegram-btn {
+            background: #0088cc;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+        
+        .telegram-btn:hover {
+            background: #006699;
+        }
+        
+        .api-status {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .service-status {
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9em;
+        }
+        
+        .service-online {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+        
+        .service-offline {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Multi-AI Telegram Bot</h1>
+        <p class="subtitle">Powered by Gemini AI & Together.ai</p>
+        
+        <div class="status" id="bot-status">
+            <strong>🔄 Checking bot status...</strong>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>🔷 Gemini AI</h3>
+                <p>Google's advanced AI for intelligent responses</p>
+            </div>
+            <div class="feature">
+                <h3>🟠 Together.ai</h3>
+                <p>Llama 3.2 model for diverse perspectives</p>
+            </div>
+            <div class="feature">
+                <h3>⚡ Concurrent Processing</h3>
+                <p>Both AI services work simultaneously</p>
+            </div>
+            <div class="feature">
+                <h3>🛡️ Error Handling</h3>
+                <p>Graceful degradation if services fail</p>
+            </div>
+        </div>
+        
+        <div class="api-status">
+            <div class="service-status" id="gemini-status">
+                <strong>Gemini AI:</strong> <span id="gemini-text">Checking...</span>
+            </div>
+            <div class="service-status" id="together-status">
+                <strong>Together.ai:</strong> <span id="together-text">Checking...</span>
+            </div>
+        </div>
+        
+        <a href="https://t.me/YOUR_BOT_USERNAME" class="telegram-btn" target="_blank">
+            📱 Start Chatting on Telegram
+        </a>
+        
+        <div style="margin-top: 30px; font-size: 0.9em; opacity: 0.8;">
+            <p>Send any message to the bot and receive responses from both AI services!</p>
+            <p>Commands: /start, /help</p>
+        </div>
+    </div>
+
+    <script>
+        async function checkBotStatus() {
+            try {
+                const response = await fetch('/status');
+                const data = await response.json();
+                
+                const statusEl = document.getElementById('bot-status');
+                const geminiEl = document.getElementById('gemini-status');
+                const togetherEl = document.getElementById('together-status');
+                const geminiText = document.getElementById('gemini-text');
+                const togetherText = document.getElementById('together-text');
+                
+                if (data.bot_running) {
+                    statusEl.innerHTML = '<strong>✅ Bot is running and ready!</strong>';
+                    statusEl.className = 'status';
+                } else {
+                    statusEl.innerHTML = '<strong>❌ Bot is offline</strong>';
+                    statusEl.className = 'status offline';
+                }
+                
+                // Update service statuses
+                if (data.services.gemini) {
+                    geminiEl.className = 'service-status service-online';
+                    geminiText.textContent = 'Online';
+                } else {
+                    geminiEl.className = 'service-status service-offline';
+                    geminiText.textContent = 'Offline';
+                }
+                
+                if (data.services.together) {
+                    togetherEl.className = 'service-status service-online';
+                    togetherText.textContent = 'Online';
+                } else {
+                    togetherEl.className = 'service-status service-offline';
+                    togetherText.textContent = 'Offline';
+                }
+                
+            } catch (error) {
+                const statusEl = document.getElementById('bot-status');
+                statusEl.innerHTML = '<strong>❌ Unable to check status</strong>';
+                statusEl.className = 'status offline';
+            }
+        }
+        
+        // Check status on page load
+        checkBotStatus();
+        
+        // Refresh status every 30 seconds
+        setInterval(checkBotStatus, 30000);
+    </script>
+</body>
+</html>
