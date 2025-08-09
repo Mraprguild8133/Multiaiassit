@@ -162,3 +162,10 @@ if __name__ == "__main__":
         reload=False,
         log_level="info"
     )
+    # Start the bot
+        logger.info("Bot is running. Press Ctrl+C to stop.")
+        self.application.run_polling(allowed_updates=Update.ALL_TYPES)
+
+if __name__ == "__main__":
+    bot = TelegramBot()
+    bot.run()
